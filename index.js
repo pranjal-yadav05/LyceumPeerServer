@@ -1,24 +1,27 @@
-import { PeerServer } from 'peer';
-import dotenv from 'dotenv';
+import express from 'express';
+import { ExpressPeerServer } from 'peer';
+import cors from 'cors';
+import http from 'http';
 
-dotenv.config();
+const app = express();
+const server = http.createServer(app);
 
-const peerServer = PeerServer({
-  port: process.env.PEER_PORT,
+app.use(cors());
+
+const peerServer = ExpressPeerServer(server, {
+  debug: true,
   path: '/',
-  allow_discovery: true,
-  proxied: true,
-  cors: {
-    origin: process.env.FRONTEND_URL
-  }
+  allow_discovery: true
 });
 
-peerServer.on('connection', (client) => {
-  console.log('Client connected:', client.getId());
-});
+app.get('/', (req,res)=>{
+  res.send(`
+    <h1>Welcome to Peer Server of Lyceum</h1>
+  `)
+})
 
-peerServer.on('disconnect', (client) => {
-  console.log('Client disconnected:', client.getId());
-});
 
-console.log(`PeerJS server running on port ${process.env.PEER_PORT}`);
+app.use('/', peerServer);
+
+
+server.listen(9000);

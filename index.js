@@ -15,12 +15,12 @@ app.use(cors({
 
 const peerServer = ExpressPeerServer(server, {
   debug: true,
-  path: '/',
+  path: '/peerjs',  // Change this to match the expected path
   allow_discovery: true,
-  proxied: true // Add this for proxy support
+  proxied: true
 });
 
-app.use('/peerjs', peerServer);
+app.use('/', peerServer);
 
 // Add a health check endpoint
 app.get('/health', (req, res) => {
@@ -34,7 +34,7 @@ app.get('/', (req,res) => {
 });
 
 if (process.env.NODE_ENV !== 'production') {
-  const PORT = process.env.PORT || 9000;
+  const PORT = process.env.PORT || 9000;  
   server.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });

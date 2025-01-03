@@ -17,11 +17,10 @@ app.use(cors({
 const peerServer = ExpressPeerServer(server, {
   debug: true,
   path: '/peerjs',
-  port: 443,
+  port: process.env.PORT,
   proxied: true, // Important for running behind a reverse proxy (like Vercel)
   ping_interval: 5000, // Keep connections alive
   allow_discovery: true,
-  key: 'peerjs' // Optional, matches the default key
 });
 
 // Monitor connections
@@ -47,7 +46,7 @@ app.get('/', (req, res) => {
 
 // Only listen directly when not running on Vercel
 if (process.env.NODE_ENV !== 'production') {
-  const PORT = process.env.PORT || 9000;
+  const PORT = process.env.PORT;
   server.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });

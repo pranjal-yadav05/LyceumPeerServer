@@ -6,22 +6,38 @@ import http from 'http';
 const app = express();
 const server = http.createServer(app);
 
-app.use(cors());
+// Add more specific CORS configuration
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 const peerServer = ExpressPeerServer(server, {
   debug: true,
   path: '/',
-  allow_discovery: true
+  allow_discovery: true,
+  proxied: true // Add this for proxy support
 });
 
-app.get('/', (req,res)=>{
+app.use('/peerjs', peerServer);
+
+// Add a health check endpoint
+app.get('/health', (req, res) => {
+  res.status(200).send('OK');
+});
+
+app.get('/', (req,res) => {
   res.send(`
     <h1>Welcome to Peer Server of Lyceum</h1>
   `)
-})
+});
 
+if (process.env.NODE_ENV !== 'production') {
+  const PORT = process.env.PORT || 9000;
+  server.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
 
-app.use('/', peerServer);
-
-
-server.listen(9000);
+export default app; // Add this for Vercel

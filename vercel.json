@@ -6,19 +6,9 @@
       "use": "@vercel/node"
     }
   ],
-  "routes": [
-    {
-      "src": "/peerjs/(.*)",
-      "dest": "/index.js",
-      "headers": {
-        "Connection": "Upgrade",
-        "Upgrade": "websocket"
-      }
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.js"
-    }
+  "rewrites": [
+    { "source": "/peerjs/(.*)", "destination": "/index.js" },
+    { "source": "/(.*)", "destination": "/index.js" }
   ],
   "headers": [
     {
